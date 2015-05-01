@@ -1,6 +1,8 @@
 selfsign
 =========
+
 [![Ansible Galaxy](http://img.shields.io/badge/galaxy-debops.console-660198.svg?style=flat)](https://galaxy.ansible.com/list#/roles/3588)
+
 Easy self signed certificates. Generates a new CA setup including CA cert, key, serial etc.  Then generates new certs signed by this CA.
 
 Requirements
