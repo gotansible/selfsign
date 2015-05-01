@@ -32,7 +32,7 @@ Role Variables
    # email is optional
    selfsign_emailAddress: admin@example.com
 
-``
+```
 
 Dependencies
 ------------
