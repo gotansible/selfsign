@@ -12,7 +12,7 @@
   file:
     state=directory
     path={{ selfsign_folder }}/private
-    mode=0700
+    mode=0755
 
 - name: generate configs
   template:
@@ -26,6 +26,9 @@
   shell: "openssl genrsa -out private/{{ selfsign_next_cert_name }}.key 2048"
   args:
     chdir: "{{ selfsign_folder }}"
+
+- name: make key private
+  file: path={{selfsign_folder}}/private/{{ selfsign_next_cert_name }}.key mode=0400
 
 - name: generate cert signing request
   shell: "openssl req -new -sha256 -config CA/opensslCA.cnf -key private/{{ selfsign_next_cert_name }}.key -out csr/{{ selfsign_next_cert_name }}.csr"
