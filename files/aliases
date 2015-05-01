@@ -1,0 +1,9 @@
+
+# view a cert > cert mycert.crt
+alias cert='openssl x509 -noout -text -in'
+
+# view a request > req myreq.csr
+alias req='openssl req -noout -text -in'
+
+# view a certificate revocation list
+alias crl='openssl crl -noout -text -in'

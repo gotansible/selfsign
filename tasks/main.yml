@@ -6,8 +6,7 @@
     state=directory
     path={{ item }}
   with_items:
-      - "{{ selfsign_folder }}/private"
-      - "{{ selfsign_folder }}/public"
+      - "{{ selfsign_folder }}"
 
 - name: create CA
   include: createCA.yml

@@ -1,25 +1,51 @@
 ---
+- name: create new cert output folders
+  file: 
+    state=directory
+    path={{ item }}
+    mode=0755
+  with_items:
+      - "{{ selfsign_folder }}/certs"
+      - "{{ selfsign_folder }}/csr"
+
+- name: create new cert private folder
+  file:
+    state=directory
+    path={{ selfsign_folder }}/private
+    mode=0700
+
 - name: generate configs
   template:
     src={{ item }}.j2
     dest={{ selfsign_folder }}/{{ item }}
-    mode=666
+    mode=660
   with_items:
     - openssl_ext.cnf
-    - openssl.cnf
 
 - name: generate private key
-  shell: "openssl genrsa -out selfSignCert.key 2048"
+  shell: "openssl genrsa -out private/{{ selfsign_next_cert_name }}.key 2048"
   args:
     chdir: "{{ selfsign_folder }}"
 
 - name: generate cert signing request
-  shell: "openssl req -new -sha256 -config openssl.cnf -key selfSignCert.key -out selfSignCert.csr"
+  shell: "openssl req -new -sha256 -config CA/opensslCA.cnf -key private/{{ selfsign_next_cert_name }}.key -out csr/{{ selfsign_next_cert_name }}.csr"
   args:
     chdir: "{{ selfsign_folder }}"
 
-- name: generate certificate and signing with CA
-  shell: "openssl x509 -req -days 3650 -CAcreateserial -in selfSignCert.csr -CA CA/selfSignCA.pem -CAkey CA/private/selfSignCA.key -CAserial CA/serial -out selfSign.crt -extfile openssl_ext.cnf -extensions v3_ca"
+- stat: path={{ selfsign_folder }}/CA/serial
+  register: serial_file
+
+# not sure if there's a better way to do this, but the first time this is run, it needs to create a serial file, 
+# and subsequent times do not
+- name: generate first time serial, certificate and signing with CA 
+  shell: "openssl x509 -req -days 3650 -CAcreateserial -in csr/{{ selfsign_next_cert_name }}.csr -CA CA/selfsignCA.pem -CAkey CA/private/selfsignCA.key -CAserial CA/serial -out certs/{{ selfsign_next_cert_name }}.crt -extfile openssl_ext.cnf -extensions v3_ca"
   args:
     chdir: "{{ selfsign_folder }}"
+  when: serial_file.stat.exists == false
+
+- name: generate certificate and signing with CA
+  shell: "openssl x509 -req -days 3650  -in csr/{{ selfsign_next_cert_name }}.csr -CA CA/selfsignCA.pem -CAkey CA/private/selfsignCA.key -CAserial CA/serial -out certs/{{ selfsign_next_cert_name }}.crt -extfile openssl_ext.cnf -extensions v3_ca"
+  args:
+    chdir: "{{ selfsign_folder }}"
+  when: serial_file.stat.exists == true
 

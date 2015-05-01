@@ -1,31 +1,30 @@
+# this site was helpful http://www.phildev.net/ssl/
+
 ####################################################################
 [ ca ]
 default_ca      = CA_default            # The default ca section
 
-
 ####################################################################
 [ CA_default ]
 
-dir             = /etc/pki/CA           # Where everything is kept
-certs           = $dir/certs            # Where the issued certs are kept
+dir             = {{ selfsign_folder }}/CA           # Where everything is kept
+new_certs_dir   = $dir/certs            # default place for newly issued certs.
+certs           = $new_certs_dir
 crl_dir         = $dir/crl              # Where the issued crl are kept
 database        = $dir/index.txt        # database index file.
 #unique_subject = no                    # Set to 'no' to allow creation of
-                                        # several ctificates with same subject.
-new_certs_dir   = $dir/newcerts         # default place for new certs.
+                                        # several certificates with same subject.
 
-certificate     = $dir/cacert.pem       # The CA certificate
+certificate     = $dir/selfsignCA.pem   # The CA certificate
 serial          = $dir/serial           # The current serial number
 crlnumber       = $dir/crlnumber        # the current crl number
                                         # must be commented out to leave a V1 CRL
 crl             = $dir/crl.pem          # The current CRL
-private_key     = $dir/private/cakey.pem# The private key
+private_key     = $dir/private/selfsignCA.key # The private key
 RANDFILE        = $dir/private/.rand    # private random number file
 
 x509_extensions = usr_cert              # The extentions to add to the cert
 
-# Comment out the following two lines for the "traditional"
-# (and highly broken) format.
 name_opt        = ca_default            # Subject Name options
 cert_opt        = ca_default            # Certificate field options
 
@@ -39,11 +38,10 @@ default_crl_days= 30                    # how long before next CRL
 default_md      = sha256                # use SHA-256 by default
 preserve        = no                    # keep passed DN ordering
 
-# For type CA 
 policy          = policy_match
 
 ####################################################################
-# The default policy for the CA when signing requests, requires some resemblence to the CA cert
+# The default policy for the CA when signing requests, requires some resemblance to the CA cert
 
 [ policy_match ]
 countryName             = match         # Must be the same as the CA
@@ -66,20 +64,12 @@ string_mask             = utf8only
 ############################################################
 [ req_distinguished_name ]
 
-#countryName                     = US
-#stateOrProvinceName             = California
-#localityName                    = Santa Monica
-#0.organizationName              = Example Company
-#commonName                      = example.com
-#emailAddress       = webmaster@example.com
-#dude
-
-C  = US
-ST = California
-L  = Santa Monica
-O  = Example Company
-CN = example.com
-
+C  ={{ selfsign_countryName }}
+ST ={{ selfsign_stateOrProvinceName }}
+L  ={{ selfsign_localityName }}
+O  ={{ selfsign_organizationName }}
+CN ={{ selfsign_commonName }}
+emailAddress = {{ selfsign_emailAddress }}
 
 ############################################################
 [ v3_ca ]

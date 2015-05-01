@@ -8,7 +8,6 @@
   with_items:
       - "{{ selfsign_folder }}/CA"
       - "{{ selfsign_folder }}/CA/certs"
-      - "{{ selfsign_folder }}/CA/newcerts"
       - "{{ selfsign_folder }}/CA/crl"
 
 - name: create CA private folder
@@ -17,11 +16,16 @@
     path={{ selfsign_folder }}/CA/private
     mode=0700
 
+- stat:
+    path={{ selfsign_folder }}/CA/index.txt
+  register: index_file
+
 - name: touch index db file
   file:
     state=touch
     path={{ selfsign_folder }}/CA/index.txt
     mode=0755
+  when: index_file.stat.exists == false
 
 - name: config opensslCA.cnf
   template:
@@ -31,28 +35,21 @@
   with_items:
     - opensslCA.cnf
 
+- stat: path={{ selfsign_folder }}/CA/private/selfsignCA.key
+  register: key_file
+
 - name: create CA private key
-  shell: openssl genrsa -out selfSignCA.key 2048
+  shell: openssl genrsa -out selfsignCA.key 2048
   args:
     chdir: "{{ selfsign_folder }}/CA/private"
+  when: key_file.stat.exists == false
+
+- stat: path="{{ selfsign_folder }}/CA/selfsignCA.pem"
+  register: cert_file
 
 - name: create CA Cert
-  shell: openssl req -x509 -new -sha256 -extensions v3_ca -config opensslCA.cnf -key private/selfSignCA.key -days 3650 -out selfSignCA.pem
-#shell: openssl ca -create_serial -out selfSignCA.pem -days 3650 -keyfile private/selfSignCA.key -selfsign -extensions v3_ca -config opensslCA.cnf -infiles selfSignCA.csr
+  shell: openssl req -x509 -new -sha256 -extensions v3_ca -config opensslCA.cnf -key private/selfsignCA.key -days 3650 -out selfsignCA.pem
   args:
     chdir: "{{ selfsign_folder }}/CA"
-
-#- stat: path={{ selfsign_folder }}/serial
-#  register: serial_file
-#
-#- name: create serial number file
-#  lineinfile:
-#    dest={{ selfsign_folder }}/serial
-#    line=10000
-#    state=present
-#    create=yes
-#    owner=root
-#    group=root
-#    mode=0755
-#  when: serial_file.stat.exists == false 
+  when: cert_file.stat.exists == false
 
