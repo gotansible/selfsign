@@ -1,0 +1,131 @@
+####################################################################
+[ ca ]
+default_ca      = CA_default            # The default ca section
+
+
+####################################################################
+[ CA_default ]
+
+dir             = /etc/pki/CA           # Where everything is kept
+certs           = $dir/certs            # Where the issued certs are kept
+crl_dir         = $dir/crl              # Where the issued crl are kept
+database        = $dir/index.txt        # database index file.
+#unique_subject = no                    # Set to 'no' to allow creation of
+                                        # several ctificates with same subject.
+new_certs_dir   = $dir/newcerts         # default place for new certs.
+
+certificate     = $dir/cacert.pem       # The CA certificate
+serial          = $dir/serial           # The current serial number
+crlnumber       = $dir/crlnumber        # the current crl number
+                                        # must be commented out to leave a V1 CRL
+crl             = $dir/crl.pem          # The current CRL
+private_key     = $dir/private/cakey.pem# The private key
+RANDFILE        = $dir/private/.rand    # private random number file
+
+x509_extensions = usr_cert              # The extentions to add to the cert
+
+# Comment out the following two lines for the "traditional"
+# (and highly broken) format.
+name_opt        = ca_default            # Subject Name options
+cert_opt        = ca_default            # Certificate field options
+
+# Extensions to add to a CRL. Note: Netscape communicator chokes on V2 CRLs
+# so this is commented out by default to leave a V1 CRL.
+# crlnumber must also be commented out to leave a V1 CRL.
+# crl_extensions        = crl_ext
+
+default_days    = 365                   # how long to certify for
+default_crl_days= 30                    # how long before next CRL
+default_md      = sha256                # use SHA-256 by default
+preserve        = no                    # keep passed DN ordering
+
+# For type CA 
+policy          = policy_match
+
+####################################################################
+# The default policy for the CA when signing requests, requires some resemblence to the CA cert
+
+[ policy_match ]
+countryName             = match         # Must be the same as the CA
+stateOrProvinceName     = match         # Must be the same as the CA
+organizationName        = match         # Must be the same as the CA
+organizationalUnitName  = optional      # not required
+commonName              = supplied      # must be there, whatever it is
+emailAddress            = optional      # not required
+
+###########################################################
+[ req ]
+
+prompt                  = no
+default_bits            = 2048
+default_md              = sha256
+distinguished_name      = req_distinguished_name
+x509_extensions         = v3_ca
+string_mask             = utf8only
+
+############################################################
+[ req_distinguished_name ]
+
+#countryName                     = US
+#stateOrProvinceName             = California
+#localityName                    = Santa Monica
+#0.organizationName              = Example Company
+#commonName                      = example.com
+#emailAddress       = webmaster@example.com
+#dude
+
+C  = US
+ST = Oxfordshire
+L  = Oxford
+O  = Example Limited
+CN = Example Limited CA
+
+
+############################################################
+[ v3_ca ]
+# Extensions for a typical CA
+# PKIX recommendation.
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid:always,issuer
+
+# This is what PKIX recommends but some broken software chokes on critical
+# extensions.
+#basicConstraints = critical,CA:true
+# So we do this instead.
+basicConstraints = CA:true
+#subjectAltName = email:move
+
+# Key usage: this is typical for a CA certificate. However since it will
+# prevent it being used as an test self-signed certificate it is best
+# left out by default.
+# keyUsage = cRLSign, keyCertSign
+
+# Some might want this also
+# nsCertType = sslCA, emailCA
+
+############################################################
+[ usr_cert ]
+# These extensions are added when 'ca' signs a request.
+
+# This goes against PKIX guidelines but some CAs do it and some software
+# requires this to avoid interpreting an end user certificate as a CA.
+basicConstraints=CA:FALSE
+
+# PKIX recommendations harmless if included in all certificates.
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid,issuer
+
+#subjectAltName = email:move
+
+# Here are some examples of the usage of nsCertType. If it is omitted
+# the certificate can be used for anything *except* object signing.
+# This is OK for an SSL server.
+# nsCertType                    = server
+# For an object signing certificate this would be used.
+# nsCertType = objsign
+# For normal client use this is typical
+# nsCertType = client, email
+# and for everything including object signing:
+# nsCertType = client, email, objsign
+
+

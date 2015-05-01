@@ -1,0 +1,18 @@
+---
+# tasks file for selfsign
+#
+- name: create working folder
+  file: 
+    state=directory
+    path={{ item }}
+  with_items:
+      - "{{ selfsign_folder }}/private"
+      - "{{ selfsign_folder }}/public"
+
+- name: create CA
+  include: createCA.yml
+
+- name: create cert and key
+  include: createCert.yml
+
+

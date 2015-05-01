@@ -1,0 +1,25 @@
+---
+- name: generate configs
+  template:
+    src={{ item }}.j2
+    dest={{ selfsign_folder }}/{{ item }}
+    mode=666
+  with_items:
+    - openssl_ext.cnf
+    - openssl.cnf
+
+- name: generate private key
+  shell: "openssl genrsa -out selfSignCert.key 2048"
+  args:
+    chdir: "{{ selfsign_folder }}"
+
+- name: generate cert signing request
+  shell: "openssl req -new -sha256 -config openssl.cnf -key selfSignCert.key -out selfSignCert.csr"
+  args:
+    chdir: "{{ selfsign_folder }}"
+
+- name: generate certificate and signing with CA
+  shell: "openssl x509 -req -days 3650 -CAcreateserial -in selfSignCert.csr -CA CA/selfSignCA.pem -CAkey CA/private/selfSignCA.key -CAserial CA/serial -out selfSign.crt -extfile openssl_ext.cnf -extensions v3_ca"
+  args:
+    chdir: "{{ selfsign_folder }}"
+

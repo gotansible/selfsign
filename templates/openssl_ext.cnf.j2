@@ -1,0 +1,9 @@
+#
+# OpenSSL configuration file, extensions only
+#
+
+[ req ]
+x509_extensions = v3_ca
+
+[ v3_ca ]
+subjectAltName = IP:{{ selfsign_server_ip }}

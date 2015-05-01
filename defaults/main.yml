@@ -1,0 +1,5 @@
+---
+# defaults file for selfsigned
+
+selfsign_folder: "/etc/pki/selfsign"
+selfsign_server_ip: "192.168.50.9"

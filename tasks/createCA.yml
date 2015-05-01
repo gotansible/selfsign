@@ -1,0 +1,58 @@
+---
+
+- name: create CA folders
+  file: 
+    state=directory
+    path={{ item }}
+    mode=0755
+  with_items:
+      - "{{ selfsign_folder }}/CA"
+      - "{{ selfsign_folder }}/CA/certs"
+      - "{{ selfsign_folder }}/CA/newcerts"
+      - "{{ selfsign_folder }}/CA/crl"
+
+- name: create CA private folder
+  file:
+    state=directory
+    path={{ selfsign_folder }}/CA/private
+    mode=0700
+
+- name: touch index db file
+  file:
+    state=touch
+    path={{ selfsign_folder }}/CA/index.txt
+    mode=0755
+
+- name: config opensslCA.cnf
+  template:
+    src={{ item }}.j2
+    dest={{ selfsign_folder }}/CA/{{ item }}
+    mode=666
+  with_items:
+    - opensslCA.cnf
+
+- name: create CA private key
+  shell: openssl genrsa -out selfSignCA.key 2048
+  args:
+    chdir: "{{ selfsign_folder }}/CA/private"
+
+- name: create CA Cert
+  shell: openssl req -x509 -new -sha256 -extensions v3_ca -config opensslCA.cnf -key private/selfSignCA.key -days 3650 -out selfSignCA.pem
+#shell: openssl ca -create_serial -out selfSignCA.pem -days 3650 -keyfile private/selfSignCA.key -selfsign -extensions v3_ca -config opensslCA.cnf -infiles selfSignCA.csr
+  args:
+    chdir: "{{ selfsign_folder }}/CA"
+
+#- stat: path={{ selfsign_folder }}/serial
+#  register: serial_file
+#
+#- name: create serial number file
+#  lineinfile:
+#    dest={{ selfsign_folder }}/serial
+#    line=10000
+#    state=present
+#    create=yes
+#    owner=root
+#    group=root
+#    mode=0755
+#  when: serial_file.stat.exists == false 
+
