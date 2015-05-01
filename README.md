@@ -1,22 +1,44 @@
-Role Name
+Role Name - selfsign
 =========
 
-A brief description of the role goes here.
+Easy self signed certificates. Generates a new CA setup including CA cert, key, serial etc.  Then generates new certs signed by this CA.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+* openssl - Assumes a recent version of opeenssl is installed.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+```yml
+# the root folder where all files are generated
+selfsign_folder: /etc/pki/selfsign
+
+# self sign certs internal to a datacenter often don't have DNS to verify the commonName
+# of the server host, so the server's IP address is added as an extension
+selfsign_server_ip: 192.168.50.9
+
+# the file name of your new cert, if you don't change this, each subsequent run
+# will overwrite the last run
+selfsign_next_cert_name: selfSignNew
+
+# your information that will be embedded in the subject of the new certificate
+selfsign_countryName: US
+selfsign_stateOrProvinceName: California
+selfsign_localityName: Santa Monica
+selfsign_organizationName: Example Company
+selfsign_commonName: example.com
+# email is optional
+selfsign_emailAddress: admin@example.com
+
+``
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+None, although, we could add one to an openssl package.  However, at this point, it may
+be more secure to require consumers to thoughtfully pick their openssl implementation to use and typically openssl is already install on most modern *nix
 
 Example Playbook
 ----------------
@@ -25,14 +47,14 @@ Including an example of how to use your role (for instance, with variables passe
 
     - hosts: servers
       roles:
-         - { role: username.rolename, x: 42 }
+         - { role: gotansible.selfsign, selfsign_server_ip: "10.0.3.35", selfsign_commonName: mycooldomain.com }
 
 License
 -------
 
-BSD
+MIT
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Created by Franklin Wise in Santa Monica, CA.

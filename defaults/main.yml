@@ -1,8 +1,8 @@
 ---
 # defaults file for selfsigned
 
-selfsign_folder: "/etc/pki/selfsign"
-selfsign_server_ip: "192.168.50.9"
+selfsign_folder: /etc/pki/selfsign
+selfsign_server_ip: 192.168.50.9
 selfsign_next_cert_name: selfSignNew
 
 selfsign_countryName: US
