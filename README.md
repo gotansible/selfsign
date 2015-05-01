@@ -6,7 +6,7 @@ Easy self signed certificates. Generates a new CA setup including CA cert, key, 
 Requirements
 ------------
 
-* openssl - Assumes a recent version of opeenssl is installed.
+* openssl - Assumes a recent version of openssl is installed.
 
 Role Variables
 --------------
