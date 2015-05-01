@@ -12,25 +12,25 @@ Role Variables
 --------------
 
 ```yml
-# the root folder where all files are generated
-selfsign_folder: /etc/pki/selfsign
+   # the root folder where all files are generated
+   selfsign_folder: /etc/pki/selfsign
 
-# self sign certs internal to a datacenter often don't have DNS to verify the commonName
-# of the server host, so the server's IP address is added as an extension
-selfsign_server_ip: 192.168.50.9
+   # self sign certs internal to a datacenter often don't have DNS to verify the commonName
+   # of the server host, so the server's IP address is added as an extension
+   selfsign_server_ip: 192.168.50.9
 
-# the file name of your new cert, if you don't change this, each subsequent run
-# will overwrite the last run
-selfsign_next_cert_name: selfSignNew
+   # the file name of your new cert, if you don't change this, each subsequent run
+   # will overwrite the last run
+   selfsign_next_cert_name: selfSignNew
 
-# your information that will be embedded in the subject of the new certificate
-selfsign_countryName: US
-selfsign_stateOrProvinceName: California
-selfsign_localityName: Santa Monica
-selfsign_organizationName: Example Company
-selfsign_commonName: example.com
-# email is optional
-selfsign_emailAddress: admin@example.com
+   # your information that will be embedded in the subject of the new certificate
+   selfsign_countryName: US
+   selfsign_stateOrProvinceName: California
+   selfsign_localityName: Santa Monica
+   selfsign_organizationName: Example Company
+   selfsign_commonName: example.com
+   # email is optional
+   selfsign_emailAddress: admin@example.com
 
 ``
 
