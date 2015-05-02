@@ -18,7 +18,7 @@
   template:
     src={{ item }}.j2
     dest={{ selfsign_folder }}/{{ item }}
-    mode=660
+    mode=644
   with_items:
     - openssl_ext.cnf
 
@@ -28,7 +28,7 @@
     chdir: "{{ selfsign_folder }}"
 
 - name: make key private
-  file: path={{selfsign_folder}}/private/{{ selfsign_next_cert_name }}.key mode=0400
+  file: path={{selfsign_folder}}/private/{{ selfsign_next_cert_name }}.key mode=0600
 
 - name: generate cert signing request
   shell: "openssl req -new -sha256 -config CA/opensslCA.cnf -key private/{{ selfsign_next_cert_name }}.key -out csr/{{ selfsign_next_cert_name }}.csr"
