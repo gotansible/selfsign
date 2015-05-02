@@ -22,18 +22,36 @@
   with_items:
     - openssl_ext.cnf
 
+- name: check for existence of previous key 
+  stat: path=private/{{ selfsign_next_cert_name }}.key
+  register: key_file
+
+- name: overwriting previous key
+  command: /bin/true
+  when: key_file.stat.exists and selfsign_overwrite
+
 - name: generate private key
   shell: "openssl genrsa -out private/{{ selfsign_next_cert_name }}.key 2048"
   args:
     chdir: "{{ selfsign_folder }}"
+  when: not key_file.stat.exists or selfsign_overwrite
 
 - name: make key private
   file: path={{selfsign_folder}}/private/{{ selfsign_next_cert_name }}.key mode=0600
+
+- name: check for existance of previous cert
+  stat: path=certs/{{ selfsign_next_cert_name }}.crt
+  register: cert_file
+
+- name: overwriting previous cert
+  command: /bin/true
+  when: cert_file.stat.exists and selfsign_overwrite
 
 - name: generate cert signing request
   shell: "openssl req -new -sha256 -config CA/opensslCA.cnf -key private/{{ selfsign_next_cert_name }}.key -out csr/{{ selfsign_next_cert_name }}.csr"
   args:
     chdir: "{{ selfsign_folder }}"
+  when: not cert_file.stat.exists or selfsign_overwrite
 
 - stat: path={{ selfsign_folder }}/CA/serial
   register: serial_file
@@ -44,11 +62,12 @@
   shell: "openssl x509 -req -days 3650 -CAcreateserial -in csr/{{ selfsign_next_cert_name }}.csr -CA CA/selfsignCA.pem -CAkey CA/private/selfsignCA.key -CAserial CA/serial -out certs/{{ selfsign_next_cert_name }}.crt -extfile openssl_ext.cnf -extensions v3_ca"
   args:
     chdir: "{{ selfsign_folder }}"
-  when: serial_file.stat.exists == false
+  when: serial_file.stat.exists == false and (not cert_file.stat.exists or selfsign_overwrite)
 
 - name: generate certificate and signing with CA
   shell: "openssl x509 -req -days 3650  -in csr/{{ selfsign_next_cert_name }}.csr -CA CA/selfsignCA.pem -CAkey CA/private/selfsignCA.key -CAserial CA/serial -out certs/{{ selfsign_next_cert_name }}.crt -extfile openssl_ext.cnf -extensions v3_ca"
   args:
     chdir: "{{ selfsign_folder }}"
-  when: serial_file.stat.exists == true
+  when: serial_file.stat.exists == true and (not cert_file.stat.exists or selfsign_overwrite)
+
 
