@@ -5,6 +5,7 @@
   file: 
     state=directory
     path={{ item }}
+    mode=0755
   with_items:
       - "{{ selfsign_folder }}"
 
