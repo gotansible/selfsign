@@ -18,4 +18,4 @@ script:
   - 'git clone --depth 1 https://github.com/nickjj/rolespec'
 
   # The location of YOUR test suite
-  - 'cd rolespec ; bin/rolespec -r https://github.com/you/some-test-suite'
+  - 'cd rolespec ; bin/rolespec -r https://github.com/gotansible/role-tests'
