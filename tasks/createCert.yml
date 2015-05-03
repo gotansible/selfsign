@@ -23,7 +23,7 @@
     - openssl_ext.cnf
 
 - name: check for existence of previous key 
-  stat: path=private/{{ selfsign_next_cert_name }}.key
+  stat: path={{ selfsign_folder }}/private/{{ selfsign_next_cert_name }}.key
   register: key_file
 
 - name: overwriting previous key
@@ -34,13 +34,13 @@
   shell: "openssl genrsa -out private/{{ selfsign_next_cert_name }}.key 2048"
   args:
     chdir: "{{ selfsign_folder }}"
-  when: not key_file.stat.exists or selfsign_overwrite
+  when: selfsign_overwrite or key_file.stat.exists|bool == false
 
 - name: make key private
   file: path={{selfsign_folder}}/private/{{ selfsign_next_cert_name }}.key mode=0600
 
 - name: check for existance of previous cert
-  stat: path=certs/{{ selfsign_next_cert_name }}.crt
+  stat: path={{ selfsign_folder }}/certs/{{ selfsign_next_cert_name }}.crt
   register: cert_file
 
 - name: overwriting previous cert
@@ -51,7 +51,7 @@
   shell: "openssl req -new -sha256 -config CA/opensslCA.cnf -key private/{{ selfsign_next_cert_name }}.key -out csr/{{ selfsign_next_cert_name }}.csr"
   args:
     chdir: "{{ selfsign_folder }}"
-  when: not cert_file.stat.exists or selfsign_overwrite
+  when: cert_file.stat.exists == false or selfsign_overwrite
 
 - stat: path={{ selfsign_folder }}/CA/serial
   register: serial_file
