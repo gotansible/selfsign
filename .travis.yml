@@ -1,22 +1,18 @@
 ---
 
-sudo: true
-# Ensure Python 2.7.x is being used
-language: 'python'
-python: '2.7'
-
-# Use system installed packages inside of the Virtual environment
-virtualenv:
-  system_site_packages: true
-
-# Skip running these which boosts the Travis boot time
-before_install: True
-install: True
-
+language: python
+python: "2.7"
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq python-apt python-pycurl
+install:
+  - pip install ansible==1.9.1
 script:
-  # Clone the RoleSpec repo, feel free to use --branch xxx to use something
-  # other than the master branch (latest stable)
-  - 'git clone --depth 1 https://github.com/nickjj/rolespec'
-
-  # The location of YOUR test suite
-  - 'cd rolespec ; bin/rolespec -r https://github.com/gotansible/role-tests'
+  - echo localhost > inventory
+  - ansible-playbook -i inventory test.yml --syntax-check
+  - ansible-playbook -i inventory test.yml --connection=local --sudo -e "nginx_install_method=$INSTALL_METHOD"
+  - >
+    ansible-playbook -i inventory test.yml --connection=local --sudo -e "nginx_install_method=$INSTALL_METHOD"
+    | grep -q 'changed=0.*failed=0'
+    && (echo 'Idempotence test: pass' && exit 0)
+    || (echo 'Idempotence test: fail' && exit 1)
