@@ -7,7 +7,7 @@ python: '2.7'
 
 # Use system installed packages inside of the Virtual environment
 virtualenv:
-  system_site_packages: True
+  system_site_packages: true
 
 # Skip running these which boosts the Travis boot time
 before_install: True
