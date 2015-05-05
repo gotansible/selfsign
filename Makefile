@@ -8,7 +8,7 @@ release:
 #	@git merge develop
 #	@git checkout develop
 #	@git push --all
-#	@git push --tags
+	@git push --tags
 #	@git checkout develop
 
 major:
