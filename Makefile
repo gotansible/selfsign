@@ -1,4 +1,5 @@
 .PHONY: release major minor patch
+#https://github.com/peritus/bumpversion
 
 VERSION?=minor
 release:
