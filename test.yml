@@ -1,9 +1,10 @@
 ---
 - hosts: all
   sudo: true
-  vars:
-    todo: ""
   roles:
-    - {role: selfsign }
-#
+    - role: selfsign
+      selfsign_server_ips:
+        - 192.168.50.11
+      selfsign_server.dnsnames:
+        - www.example.com
 

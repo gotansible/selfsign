@@ -6,4 +6,14 @@
 x509_extensions = v3_ca
 
 [ v3_ca ]
-subjectAltName = IP:{{ selfsign_server_ip }}
+subjectAltName = @alt_names
+
+[alt_names]
+{% for ip in selfsign_server_ips %}
+IP.{{ loop.index }} = {{ ip }}
+{% endfor %}
+
+{% for hostname in selfsign_server_dnsnames %}
+DNS.{{ loop.index }} = {{ hostname }}
+{% endfor %}
+

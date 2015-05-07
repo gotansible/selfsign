@@ -2,8 +2,9 @@
 # defaults file for selfsigned
 
 selfsign_folder: /etc/pki/selfsign
-selfsign_server_ip: 192.168.50.9
 selfsign_next_cert_name: selfSignNew
+selfsign_server_ips: []  # 10.0.23.42
+selfsign_server_dnsnames: [] # my.example.com
 
 selfsign_countryName: US
 selfsign_stateOrProvinceName: California

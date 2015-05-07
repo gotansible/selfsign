@@ -18,8 +18,14 @@ Role Variables
    selfsign_folder: /etc/pki/selfsign
 
    # self sign certs internal to a datacenter often don't have DNS to verify the commonName
-   # of the server host, so the server's IP address is added as an extension
-   selfsign_server_ip: 192.168.50.9
+   # of the server host, so the server's IP address(es) is/are added as an extension
+   selfsign_server_ips: 
+     - 192.168.50.9
+
+	# multiple resolvable hostnames for the same server
+   selfsign_server_dnsnames:
+     - server.example.com 
+	 - alias.example.com
 
    # the file name of your new cert, if you don't change this, each subsequent run
    # will NOT overwrite the last run unless selfsign_overwrite is set to true
@@ -58,7 +64,8 @@ Including an example of how to use your role (for instance, with variables passe
     - hosts: servers
       roles:
          - role: gotansible.selfsign
-		   selfsign_server_ip: "10.0.3.35"
+		   selfsign_server_ips: 
+		     - 10.0.3.35
 		   selfsign_commonName: mycooldomain.com 
 		   selfsign_next_cert_name: myGroovyCertName
 		   selfsign_organizationName: Gooogahooo, Inc.
