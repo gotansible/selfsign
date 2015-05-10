@@ -4,7 +4,6 @@
   roles:
     - role: selfsign
       selfsign_server_ips:
-        - 192.168.50.11
-      selfsign_server.dnsnames:
-        - www.example.com
-
+        - 10.0.3.35
+      selfsign_server_dnsnames:
+        - my.example.com

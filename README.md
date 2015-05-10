@@ -40,8 +40,6 @@ Role Variables
    selfsign_localityName: Santa Monica
    selfsign_organizationName: Example Company
    selfsign_commonName: example.com
-
-   # email is optional
    selfsign_emailAddress: admin@example.com
 
    # if the key and or cert already exists setting this to true will cause them to get overwritten
@@ -69,7 +67,7 @@ Including an example of how to use your role (for instance, with variables passe
 		   selfsign_commonName: mycooldomain.com 
 		   selfsign_next_cert_name: myGroovyCertName
 		   selfsign_organizationName: Gooogahooo, Inc.
-
+		   selfsign_emailAddress: admin@mycooldomain.com
 
 License
 -------
