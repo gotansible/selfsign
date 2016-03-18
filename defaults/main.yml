@@ -14,3 +14,5 @@ selfsign_commonName: example.com
 selfsign_emailAddress: admin@example.com
 
 selfsign_overwrite: false
+
+selfsign_owner: root

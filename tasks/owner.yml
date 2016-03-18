@@ -1,0 +1,11 @@
+---
+
+- name: set owner
+  file:
+    state=file
+    path={{ selfsign_folder }}/{{ item }}
+    owner={{ selfsign_owner }}
+  with_items:
+    - certs/{{ selfsign_next_cert_name }}.crt
+    - private/{{ selfsign_next_cert_name }}.key
+    - CA/{{ selfsign_next_cert_name }}.pem
