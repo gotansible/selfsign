@@ -3,8 +3,8 @@
 - name: set owner
   file:
     state=file
-    path={{ selfsign_folder }}/{{ item }}
-    owner={{ selfsign_owner }}
+    path={{ sslcert_folder }}/{{ item }}
+    owner={{ sslcert_owner }}
   with_items:
-    - certs/{{ selfsign_next_cert_name }}.crt
-    - private/{{ selfsign_next_cert_name }}.key
+    - certs/{{ sslcert_next_cert_name }}.crt
+    - private/{{ sslcert_next_cert_name }}.key

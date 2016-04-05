@@ -6,16 +6,16 @@
 x509_extensions = v3_ca
 
 [ v3_ca ]
-{% if selfsign_server_ips|length > 0 or selfsign_server_dnsnames|length > 0 %}
+{% if sslcert_server_ips|length > 0 or sslcert_server_dnsnames|length > 0 %}
 subjectAltName = @alt_names
 
 
 [alt_names]
-{% for ip in selfsign_server_ips %}
+{% for ip in sslcert_server_ips %}
 IP.{{ loop.index }} = {{ ip }}
 {% endfor %}
 
-{% for hostname in selfsign_server_dnsnames %}
+{% for hostname in sslcert_server_dnsnames %}
 DNS.{{ loop.index }} = {{ hostname }}
 {% endfor %}
 

@@ -1,13 +1,12 @@
 ---
-# tasks file for selfsign
-#
+
 - name: create working folder
   file: 
     state=directory
     path={{ item }}
     mode=0755
   with_items:
-      - "{{ selfsign_folder }}"
+      - "{{ sslcert_folder }}"
 
 - name: create CA
   include: createCA.yml

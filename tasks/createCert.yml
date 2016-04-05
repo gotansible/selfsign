@@ -5,69 +5,69 @@
     path={{ item }}
     mode=0755
   with_items:
-      - "{{ selfsign_folder }}/certs"
-      - "{{ selfsign_folder }}/csr"
+      - "{{ sslcert_folder }}/certs"
+      - "{{ sslcert_folder }}/csr"
 
 - name: create new cert private folder
   file:
     state=directory
-    path={{ selfsign_folder }}/private
+    path={{ sslcert_folder }}/private
     mode=0755
 
 - name: generate configs
   template:
     src={{ item }}.j2
-    dest={{ selfsign_folder }}/{{ item }}
+    dest={{ sslcert_folder }}/{{ item }}
     mode=644
   with_items:
     - openssl_ext.cnf
 
 - name: check for existence of previous key 
-  stat: path={{ selfsign_folder }}/private/{{ selfsign_next_cert_name }}.key
+  stat: path={{ sslcert_folder }}/private/{{ sslcert_next_cert_name }}.key
   register: key_file
 
 - name: overwriting previous key
   command: /bin/true
-  when: key_file.stat.exists and selfsign_overwrite
+  when: key_file.stat.exists and sslcert_overwrite
 
 - name: generate private key
-  shell: "openssl genrsa -out private/{{ selfsign_next_cert_name }}.key 2048"
+  shell: "openssl genrsa -out private/{{ sslcert_next_cert_name }}.key 2048"
   args:
-    chdir: "{{ selfsign_folder }}"
-  when: selfsign_overwrite or key_file.stat.exists|bool == false
+    chdir: "{{ sslcert_folder }}"
+  when: sslcert_overwrite or key_file.stat.exists|bool == false
 
 - name: make key private
-  file: path={{selfsign_folder}}/private/{{ selfsign_next_cert_name }}.key mode=0600
+  file: path={{sslcert_folder}}/private/{{ sslcert_next_cert_name }}.key mode=0600
 
 - name: check for existance of previous cert
-  stat: path={{ selfsign_folder }}/certs/{{ selfsign_next_cert_name }}.crt
+  stat: path={{ sslcert_folder }}/certs/{{ sslcert_next_cert_name }}.crt
   register: cert_file
 
 - name: overwriting previous cert
   command: /bin/true
-  when: cert_file.stat.exists and selfsign_overwrite
+  when: cert_file.stat.exists and sslcert_overwrite
 
 - name: generate cert signing request
-  shell: "openssl req -new -sha256 -config CA/opensslCA.cnf -key private/{{ selfsign_next_cert_name }}.key -out csr/{{ selfsign_next_cert_name }}.csr"
+  shell: "openssl req -new -sha256 -config CA/opensslCA.cnf -key private/{{ sslcert_next_cert_name }}.key -out csr/{{ sslcert_next_cert_name }}.csr"
   args:
-    chdir: "{{ selfsign_folder }}"
-  when: cert_file.stat.exists == false or selfsign_overwrite
+    chdir: "{{ sslcert_folder }}"
+  when: cert_file.stat.exists == false or sslcert_overwrite
 
-- stat: path={{ selfsign_folder }}/CA/serial
+- stat: path={{ sslcert_folder }}/CA/serial
   register: serial_file
 
 # not sure if there's a better way to do this, but the first time this is run, it needs to create a serial file, 
 # and subsequent times do not
 - name: generate first time serial, certificate and signing with CA 
-  shell: "openssl x509 -req -days 3650 -CAcreateserial -in csr/{{ selfsign_next_cert_name }}.csr -CA CA/selfsignCA.pem -CAkey CA/private/selfsignCA.key -CAserial CA/serial -out certs/{{ selfsign_next_cert_name }}.crt -extfile openssl_ext.cnf -extensions v3_ca"
+  shell: "openssl x509 -req -days 3650 -CAcreateserial -in csr/{{ sslcert_next_cert_name }}.csr -CA CA/selfsignCA.pem -CAkey CA/private/selfsignCA.key -CAserial CA/serial -out certs/{{ sslcert_next_cert_name }}.crt -extfile openssl_ext.cnf -extensions v3_ca"
   args:
-    chdir: "{{ selfsign_folder }}"
-  when: serial_file.stat.exists == false and (not cert_file.stat.exists or selfsign_overwrite)
+    chdir: "{{ sslcert_folder }}"
+  when: serial_file.stat.exists == false and (not cert_file.stat.exists or sslcert_overwrite)
 
 - name: generate certificate and signing with CA
-  shell: "openssl x509 -req -days 3650  -in csr/{{ selfsign_next_cert_name }}.csr -CA CA/selfsignCA.pem -CAkey CA/private/selfsignCA.key -CAserial CA/serial -out certs/{{ selfsign_next_cert_name }}.crt -extfile openssl_ext.cnf -extensions v3_ca"
+  shell: "openssl x509 -req -days 3650  -in csr/{{ sslcert_next_cert_name }}.csr -CA CA/selfsignCA.pem -CAkey CA/private/selfsignCA.key -CAserial CA/serial -out certs/{{ sslcert_next_cert_name }}.crt -extfile openssl_ext.cnf -extensions v3_ca"
   args:
-    chdir: "{{ selfsign_folder }}"
-  when: serial_file.stat.exists == true and (not cert_file.stat.exists or selfsign_overwrite)
+    chdir: "{{ sslcert_folder }}"
+  when: serial_file.stat.exists == true and (not cert_file.stat.exists or sslcert_overwrite)
 
 

@@ -2,8 +2,8 @@
 - hosts: all
   sudo: true
   roles:
-    - role: selfsign
-      selfsign_server_ips:
+    - role: sslcert
+      sslcert_server_ips:
         - 10.0.3.35
-      selfsign_server_dnsnames:
+      sslcert_server_dnsnames:
         - my.example.com

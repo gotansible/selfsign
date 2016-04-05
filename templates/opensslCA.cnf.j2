@@ -7,7 +7,7 @@ default_ca      = CA_default            # The default ca section
 ####################################################################
 [ CA_default ]
 
-dir             = {{ selfsign_folder }}/CA           # Where everything is kept
+dir             = {{ sslcert_folder }}/CA           # Where everything is kept
 new_certs_dir   = $dir/certs            # default place for newly issued certs.
 certs           = $new_certs_dir
 crl_dir         = $dir/crl              # Where the issued crl are kept
@@ -64,12 +64,12 @@ string_mask             = utf8only
 ############################################################
 [ req_distinguished_name ]
 
-C  ={{ selfsign_countryName }}
-ST ={{ selfsign_stateOrProvinceName }}
-L  ={{ selfsign_localityName }}
-O  ={{ selfsign_organizationName }}
-CN ={{ selfsign_commonName }}
-emailAddress = {{ selfsign_emailAddress }}
+C  ={{ sslcert_countryName }}
+ST ={{ sslcert_stateOrProvinceName }}
+L  ={{ sslcert_localityName }}
+O  ={{ sslcert_organizationName }}
+CN ={{ sslcert_commonName }}
+emailAddress = {{ sslcert_emailAddress }}
 
 ############################################################
 [ v3_ca ]

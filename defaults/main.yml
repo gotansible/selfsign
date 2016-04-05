@@ -1,18 +1,17 @@
 ---
-# defaults file for selfsigned
 
-selfsign_folder: /etc/pki/selfsign
-selfsign_next_cert_name: selfSignNew
-selfsign_server_ips: []  # 10.0.23.42
-selfsign_server_dnsnames: [] # my.example.com
+sslcert_folder: /etc/pki/selfsign
+sslcert_next_cert_name: selfSignNew
+sslcert_server_ips: []  # 10.0.23.42
+sslcert_server_dnsnames: [] # my.example.com
 
-selfsign_countryName: US
-selfsign_stateOrProvinceName: California
-selfsign_localityName: Santa Monica
-selfsign_organizationName: Example Company
-selfsign_commonName: example.com
-selfsign_emailAddress: admin@example.com
+sslcert_countryName: US
+sslcert_stateOrProvinceName: California
+sslcert_localityName: Santa Monica
+sslcert_organizationName: Example Company
+sslcert_commonName: example.com
+sslcert_emailAddress: admin@example.com
 
-selfsign_overwrite: false
+sslcert_overwrite: false
 
-selfsign_owner: root
+sslcert_owner: root
